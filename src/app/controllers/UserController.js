@@ -35,7 +35,7 @@ class UserController {
   }
 
   async show(req, res) {
-    const user = await User.findByPk(req.userId);
+    const user = await User.findByPk(req.params.id);
     if (!user) {
       return res.status(404).json({
         error: { message: "Can't find requested user, maybe dosn't exists" },
