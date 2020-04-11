@@ -13,12 +13,8 @@ class UserController {
   }
 
   async update(req, res) {
-    const user = await User.findByPk(req.userId);
-    if (!user) {
-      return res.status(404).json({
-        error: { message: "Can't find requested user, maybe dosn't exists" },
-      });
-    }
+    const user = await User.findByPk(req.params.id);
+
     const { oldPassword } = req.body;
 
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
@@ -36,11 +32,6 @@ class UserController {
 
   async show(req, res) {
     const user = await User.findByPk(req.params.id);
-    if (!user) {
-      return res.status(404).json({
-        error: { message: "Can't find requested user, maybe dosn't exists" },
-      });
-    }
 
     return res.status(200).json({
       id: user.id,
@@ -51,15 +42,11 @@ class UserController {
   }
 
   async delete(req, res) {
-    const user = await User.findByPk(req.userId);
-    if (!user) {
-      return res.status(404).json({
-        error: { message: "Can't find requested user, maybe dosn't exists" },
-      });
-    }
-    await user.delete();
+    const user = await User.findByPk(req.params.id);
 
-    return res.status(204);
+    await user.destroy();
+
+    return res.status(204).send();
   }
 }
 

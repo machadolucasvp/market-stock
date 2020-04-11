@@ -11,7 +11,7 @@ describe('User', () => {
   it('should create a user', async () => {
     const res = await request(app).post('/users').send({
       name: 'Lucas Machado',
-      email: 'lucasvufma@gmail.com',
+      email: 'machadolucasvp@gmail.com',
       password_hash: '123456',
       status: true,
     });
@@ -19,7 +19,7 @@ describe('User', () => {
     expect(res.body).not.toHaveProperty('password_hash', '123456');
     expect(res.body).toMatchObject({
       name: 'Lucas Machado',
-      email: 'lucasvufma@gmail.com',
+      email: 'machadolucasvp@gmail.com',
       status: true,
     });
   });
@@ -27,7 +27,7 @@ describe('User', () => {
   it('should return a user', async () => {
     const user = await User.create({
       name: 'Lucas Machado',
-      email: 'lucasvufma@gmail.com',
+      email: 'machadolucasvp@gmail.com',
       password_hash: '123456',
       status: true,
     });
@@ -37,7 +37,7 @@ describe('User', () => {
     expect(res.body).toMatchObject({
       id: user.id,
       name: 'Lucas Machado',
-      email: 'lucasvufma@gmail.com',
+      email: 'machadolucasvp@gmail.com',
       status: true,
     });
   });
