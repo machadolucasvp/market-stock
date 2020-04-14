@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import UserController from './app/controllers/UserController';
-import UserMiddleware from './app/middlewares/UserMiddleware';
 import ClientController from './app/controllers/ClientController';
 import ClientMiddleware from './app/middlewares/ClientMiddleware';
 import SessionController from './app/controllers/SessionController';
@@ -13,9 +12,9 @@ routes.post('/sessions', SessionController.store);
 
 routes.use(AuthMiddleware);
 
-routes.get('/users/:id', UserMiddleware, UserController.show);
-routes.put('/users/:id', UserMiddleware, UserController.update);
-routes.delete('/users/:id', UserMiddleware, UserController.delete);
+routes.get('/users/:id', UserController.show);
+routes.put('/users/:id', UserController.update);
+routes.delete('/users/:id', UserController.delete);
 
 routes.post('/clients', ClientController.store);
 routes.get('/clients/:id', ClientMiddleware, ClientController.show);
