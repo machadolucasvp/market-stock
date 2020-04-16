@@ -18,12 +18,12 @@ export default (req, res, next) => {
     });
   };
 
-  return verifyToken(parsedToken, process.env.JWET_KEY)
+  return verifyToken(parsedToken, process.env.JWT_KEY)
     .then((result) => {
       req.userId = result.id;
       return next();
     })
     .catch(() => {
-      return res.status(401).json({ error: 'Token invalid' });
+      return res.status(401).json({ error: { message: 'Token invalid' } });
     });
 };

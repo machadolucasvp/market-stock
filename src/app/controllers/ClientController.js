@@ -2,14 +2,17 @@ import Client from '../models/Client';
 
 class ClientController {
   async store(req, res) {
-    const { id, name, email, status } = await Client.create(req.body);
-
-    return res.status(200).json({
-      id,
-      email,
-      name,
-      status,
-    });
+    try {
+      const { id, name, email, status } = await Client.create(req.body);
+      return res.status(200).json({
+        id,
+        email,
+        name,
+        status,
+      });
+    } catch (err) {
+      return res.status(400).send();
+    }
   }
 
   async show(req, res) {

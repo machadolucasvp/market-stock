@@ -13,8 +13,8 @@ routes.post('/sessions', SessionController.store);
 routes.use(AuthMiddleware);
 
 routes.get('/users/:id', UserController.show);
-routes.put('/users/:id', UserController.update);
-routes.delete('/users/:id', UserController.delete);
+routes.put('/users', UserController.update);
+routes.delete('/users', UserController.delete);
 
 routes.post('/clients', ClientController.store);
 routes.get('/clients/:id', ClientMiddleware, ClientController.show);
