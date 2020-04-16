@@ -12,7 +12,7 @@ describe('User', () => {
     return {
       name: 'Lucas Machado',
       email: 'machadolucasvp@gmail.com',
-      password_hash: '123456',
+      password: '123456',
       status: true,
     };
   };
@@ -31,8 +31,13 @@ describe('User', () => {
 
   it('should retrieve a user', async () => {
     const user = await User.create(mockUser());
+    const session = await request(app)
+      .post('/sessions')
+      .send({ email: user.email, password: user.password });
 
-    const res = await request(app).get(`/users/${user.dataValues.id}`);
+    const res = await request(app)
+      .get(`/users/${user.dataValues.id}`)
+      .set('Authorization', `Bearer: ${session.body.token}`);
 
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({
@@ -45,10 +50,17 @@ describe('User', () => {
 
   it('should update a user', async () => {
     const user = await User.create(mockUser());
+    const session = await request(app)
+      .post('/sessions')
+      .send({ email: user.email, password: user.password });
+
     user.name = 'Lucas';
     user.email = 'lucas@gmail.com';
 
-    const res = await request(app).put(`/users/${user.id}`).send(user.toJSON());
+    const res = await request(app)
+      .put(`/users`)
+      .set('Authorization', `Bearer: ${session.body.token}`)
+      .send(user.toJSON());
 
     expect(res.status).toBe(200);
 
@@ -61,8 +73,13 @@ describe('User', () => {
 
   it('should delete a user', async () => {
     const user = await User.create(mockUser());
+    const session = await request(app)
+      .post('/sessions')
+      .send({ email: user.email, password: user.password });
 
-    const res = await request(app).delete(`/users/${user.id}`);
+    const res = await request(app)
+      .delete(`/users`)
+      .set('Authorization', `Bearer: ${session.body.token}`);
 
     expect(res.status).toBe(204);
 
@@ -74,38 +91,48 @@ describe('User', () => {
       name: 'Lucas Machado',
     });
 
-    expect(res.status).toBe(204);
+    expect(res.status).toBe(400);
   });
 
   it('should not retrieve a user', async () => {
-    const randomId = Math.floor(Math.random() * 10);
+    const user = await User.create(mockUser());
+    const session = await request(app)
+      .post('/sessions')
+      .send({ email: user.email, password: user.password });
 
-    const res = await request(app).get(`/users/${randomId}`);
+    const randomId = Math.floor(Math.random() * 10 + 5);
 
-    expect(res.status).toBe(204);
-    expect(res.body).toMatchObject({
-      error: { message: "Can't find requested user, maybe doesn't exists" },
-    });
+    const res = await request(app)
+      .get(`/users/${randomId}`)
+      .set('Authorization', `Bearer: ${session.body.token}`);
+
+    expect(res.status).toBe(404);
   });
 
   it('should not update a user', async () => {
-    const randomId = Math.floor(Math.random() * 10);
+    const user = await User.create(mockUser());
+    const session = await request(app)
+      .post('/sessions')
+      .send({ email: user.email, password: user.password });
 
-    const res = await request(app).put(`/users/${randomId}`).send(mockUser());
+    const randomValue = Math.floor(Math.random() * 100);
 
-    expect(res.status).toBe(204);
+    const res = await request(app)
+      .put(`/users`)
+      .send(mockUser())
+      .set('Authorization', `Bearer: ${session.body.token + randomValue}`);
+
+    expect(res.status).toBe(401);
     expect(res.body).toMatchObject({
-      error: { message: "Can't find requested user, maybe doesn't exists" },
+      error: { message: 'Token invalid' },
     });
   });
   it('should not delete a user', async () => {
-    const randomId = Math.floor(Math.random() * 10);
+    const res = await request(app).delete(`/users`);
 
-    const res = await request(app).delete(`/users/${randomId}`);
-
-    expect(res.status).toBe(204);
+    expect(res.status).toBe(401);
     expect(res.body).toMatchObject({
-      error: { message: "Can't find requested user, maybe doesn't exists" },
+      error: { message: 'Token not provided' },
     });
   });
 });
